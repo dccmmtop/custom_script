@@ -1,0 +1,7 @@
+#!/usr/bin/ruby
+# 本来想复制文件名到剪切板，与原来的功能冲突了
+# shutter 默认复制了图片到剪切板
+# require "clipboard"
+name = Time.now.to_i.to_s + ".png"
+`shutter -s -o ~/图片/#{name}`
+# Clipboard.copy("/home/mc/图片/#{name}")
