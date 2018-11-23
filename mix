@@ -1,0 +1,71 @@
+#!/usr/bin/ruby
+require 'net/ftp'
+class Mix
+  def initialize
+    @ftp = connect
+    @files = @ftp.list
+  end
+
+  def close
+    @ftp.close
+  end
+
+  def list_file
+    puts @files
+    close
+  end
+
+  def pull_file(file)
+    @files.each do |f|
+      f = f.to_s.force_encoding("UTF-8").split(/\d+?:\d+?\s/).last
+      if f =~ /#{file}/ 
+        puts  "正在下载#{f}..."
+        @ftp.get(f)
+      end
+    end
+    close
+  end
+
+  def push_file(file)
+    if File.file? file
+      puts "uploading #{file}"
+      @ftp.put(file)
+    elsif File.directory? file
+      path = file
+      Dir.open(path).each do |file|
+        next unless File.file? file
+        puts "uploading #{file}"
+        @ftp.put(file)
+      end
+    end
+    close
+  end
+
+  private  
+
+  def connect
+    ftp = Net::FTP.new('192.168.31.97',port: 2121) #ftp地址
+    ftp.passive = true
+    ftp.login('dccmmtop','dccmmtop')#ftp账号 密码
+    return ftp
+  end
+end
+if ARGV[0] =~ /^list$|^pull$|^push$/
+  mix = Mix.new
+  if ARGV[0] == "list"
+    mix.list_file
+  elsif ARGV[0] == "pull"
+    mix.pull_file(ARGV[1])
+  elsif ARGV[0] == "push"
+    mix.push_file(ARGV[1])
+  end
+else
+  puts <<-EOF
+
+   list 列出手机上文件列表
+   pull FILE 下载文件，默认使用正则进行匹配
+   push FILE/DIR 上传文件
+   help 帮助
+
+  EOF
+end
