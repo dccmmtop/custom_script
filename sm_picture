@@ -1,0 +1,4 @@
+#! /usr/bin/ruby
+require "json"
+re = `curl -s -X POST -F 'smfile=@#{ARGV[0]}'  https://sm.ms/api/upload`
+puts JSON.parse(re)['data']['url'] + "?filename=#{ARGV[0]}"
