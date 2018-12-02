@@ -2,7 +2,9 @@
 # 本来想复制文件名到剪切板，与原来的功能冲突了
 # shutter 默认复制了图片到剪切板
 require "clipboard"
-name = "#{ENV["HOME"]}/blog/picture/#{Time.now.to_i.to_s}.png"
+picture_path = "#{ENV["HOME"]}/blog/picture/"
+`mkdir -p #{picture_path}` unless Dir.exist?(picture_path)
+name = "#{picture_path}#{Time.now.to_i.to_s}.png"
 `shutter -s -o #{name}`
 Clipboard.copy("#{name}")
 
