@@ -1,6 +1,8 @@
 #!/usr/bin/ruby
 #encoding: utf-8
 require "httparty"
+require "uri"
+require "colorize"
 include HTTParty
 def analysis(file)
   content = File.open(file,"r").read
@@ -44,11 +46,10 @@ def add_files(files)
     else
       puts "#{result}                  \033[22;31m✗✗✗✗✗✗✗✗✗✗✗✗✗✗\033[0m\n\n"
     end
+    puts (URI.escape "https://dccmm.world/topics/#{file.gsub(".md","")}").colorize(:light_blue)
   end
-  unless blog[:tag] && blog[:tag] =~ /hidden/
-    puts `git add #{files.join(' ')}`
-    puts `git commit -m '#{files.join}'`
-  end
+  puts `git add #{files.join(' ')}`
+  puts `git commit -m '#{files.join}'`
 end
 
 def remove_file(files)
